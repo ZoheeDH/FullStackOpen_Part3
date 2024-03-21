@@ -11,16 +11,16 @@ morgan.token('body', function(req, res) {
 })
 
 app.use(express.json())
-app.use(morgan('tiny', {skip: function(req,res) {return req.method === 'POST'}}))
+app.use(morgan('tiny', { skip: function(req,res) {return req.method === 'POST'} }))
 app.use(morgan(
-  ':method :url :status :res[content-length] - :response-time ms :body', 
-  {skip: function(req,res) {return req.method !== 'POST'}}
+  ':method :url :status :res[content-length] - :response-time ms :body',
+  { skip: function(req,res) {return req.method !== 'POST'} }
 ))
 app.use(express.static('dist'))
 
 app.get('/info', (req, res) => {
   const t = new Date(Date.now())
-  Person.find({}).then(persons => 
+  Person.find({}).then(persons =>
     res.send(`
       <p>Phonebook has info for ${persons.length} people</p> 
       <p>${t}</p>
@@ -54,15 +54,15 @@ app.post('/api/persons', (req, res, next) => {
   const body = req.body
 
   if (!body.name || !body.number) {
-    return res.status(400).send({error: 'Name or number missing'})
+    return res.status(400).send({ error: 'Name or number missing' })
   }
-  Person.find({name: body.name})
+  Person.find({ name: body.name })
     .then(person => {
       if (person.length > 0) {
-        res.status(400).send({error: 'Name must be unique'})
+        res.status(400).send({ error: 'Name must be unique' })
       } else {
         const person = new Person({
-          name: body.name, 
+          name: body.name,
           number: body.number
         })
         person.save()
@@ -75,9 +75,9 @@ app.post('/api/persons', (req, res, next) => {
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
-  const {name, number} = req.body
+  const { name, number } = req.body
 
-  Person.findByIdAndUpdate(req.params.id, {name, number}, {new: true, runValidators: true, context: 'query'})
+  Person.findByIdAndUpdate(req.params.id, { name, number }, { new: true, runValidators: true, context: 'query' })
     .then(updatedPerson => res.json(updatedPerson))
     .catch(err => next(err))
 })
@@ -85,9 +85,9 @@ app.put('/api/persons/:id', (req, res, next) => {
 const errorHandler = (err, req, res, next) => {
   console.log(err.message)
   if (err.name === 'CastError') {
-    return res.status(400).send({error: 'Malformatted id'})
+    return res.status(400).send({ error: 'Malformatted id' })
   } else if (err.name === 'ValidationError') {
-    return res.status(400).send({error: err.message})
+    return res.status(400).send({ error: err.message })
   }
   next(err)
 }
