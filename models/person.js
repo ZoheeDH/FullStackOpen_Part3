@@ -15,8 +15,22 @@ mongoose.connect(url)
   })
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    minLength: 3,
+    required: true
+  },
+  number: {
+    type: String,
+    minLength: 8,
+    validate: {
+      validator: function(value) {
+        return /^\d{2}-\d+$|^\d{3}-\d+$/.test(value)
+      },
+      message: 'Malformatted number. The number must start with 2 or 3 digits and must contain only 1 hyphen after that.'
+    },
+    required: true
+  }
 })
 
 personSchema.set('toJSON', {
