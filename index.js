@@ -70,25 +70,25 @@ app.get('/api/persons/:id', (req, res) => {
 //   res.status(204).end()
 // })
 
-// app.post('/api/persons', (req, res) => {
-//   const body = req.body
+app.post('/api/persons', (req, res) => {
+  const body = req.body
 
-//   if (!body.name || !body.number) {
-//     return res.status(400).send({error: 'Name or number missing'})
-//   }
-//   if (persons.find(person => person.name === body.name)) {
-//     return res.status(400).send({error: 'Name must be unique'})
-//   }
+  if (!body.name || !body.number) {
+    return res.status(400).send({error: 'Name or number missing'})
+  }
+  // if (persons.find(person => person.name === body.name)) {
+  //   return res.status(400).send({error: 'Name must be unique'})
+  // }
 
-//   const person = {
-//     name: body.name,
-//     number: body.number,
-//     id: Math.floor(Math.random() * 1000000)
-//   }
-//   persons = persons.concat(person)
-
-//   res.json(person)
-// })
+  const person = new Person({
+    name: body.name, 
+    number: body.number
+  })
+  
+  person.save().then(savedPerson => {
+    res.json(savedPerson)
+  })
+})
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
